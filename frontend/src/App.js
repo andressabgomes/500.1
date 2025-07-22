@@ -717,13 +717,13 @@ const TeamManagement = () => {
               alt="Team management"
               className="w-32 h-32 mx-auto mb-4 rounded-lg object-cover"
             />
-            <p className="text-gray-500 mb-4">No team members found</p>
+            <p className="text-gray-500 mb-4">Nenhum membro da equipe encontrado</p>
             {user?.role === 'manager' && (
               <button
                 onClick={() => setShowAddForm(true)}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
-                Add Your First Team Member
+                Adicionar Primeiro Membro
               </button>
             )}
           </div>
