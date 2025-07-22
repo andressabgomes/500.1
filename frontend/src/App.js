@@ -383,7 +383,10 @@ const Dashboard = () => {
                     shift.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
                     'bg-red-100 text-red-800'
                   }`}>
-                    {shift.status.replace('_', ' ').toUpperCase()}
+                    {shift.status === 'completed' ? 'CONCLUÍDO' :
+                     shift.status === 'in_progress' ? 'EM ANDAMENTO' :
+                     shift.status === 'scheduled' ? 'AGENDADO' :
+                     'PERDIDO'}
                   </span>
                 </div>
               ))}
