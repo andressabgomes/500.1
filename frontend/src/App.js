@@ -664,7 +664,7 @@ const TeamManagement = () => {
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         member.role === 'manager' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                       }`}>
-                        {member.role.toUpperCase()}
+                        {member.role === 'manager' ? 'GERENTE' : 'AGENTE'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
