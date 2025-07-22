@@ -277,7 +277,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Team</p>
+                <p className="text-sm font-medium text-gray-600">Total da Equipe</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.total_team_members}</p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
@@ -291,7 +291,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active</p>
+                <p className="text-sm font-medium text-gray-600">Ativos</p>
                 <p className="text-2xl font-bold text-green-600">{stats.active_members}</p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
@@ -305,7 +305,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">On Shift</p>
+                <p className="text-sm font-medium text-gray-600">Em Plantão</p>
                 <p className="text-2xl font-bold text-purple-600">{stats.members_on_shift}</p>
               </div>
               <div className="p-3 bg-purple-100 rounded-lg">
@@ -319,7 +319,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Completed Today</p>
+                <p className="text-sm font-medium text-gray-600">Concluídos Hoje</p>
                 <p className="text-2xl font-bold text-blue-600">{stats.completed_shifts_today}</p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
@@ -333,7 +333,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Upcoming</p>
+                <p className="text-sm font-medium text-gray-600">Próximos</p>
                 <p className="text-2xl font-bold text-orange-600">{stats.upcoming_shifts}</p>
               </div>
               <div className="p-3 bg-orange-100 rounded-lg">
@@ -347,7 +347,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Missed</p>
+                <p className="text-sm font-medium text-gray-600">Perdidos</p>
                 <p className="text-2xl font-bold text-red-600">{stats.missed_shifts}</p>
               </div>
               <div className="p-3 bg-red-100 rounded-lg">
