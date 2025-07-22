@@ -541,11 +541,11 @@ const TeamManagement = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
             <h3 className="text-lg font-semibold mb-4">
-              {editingMember ? 'Edit Team Member' : 'Add Team Member'}
+              {editingMember ? 'Editar Membro da Equipe' : 'Adicionar Membro da Equipe'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -565,18 +565,18 @@ const TeamManagement = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
                 <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={formData.role}
                   onChange={(e) => setFormData({...formData, role: e.target.value})}
                 >
-                  <option value="agent">Agent</option>
-                  <option value="manager">Manager</option>
+                  <option value="agent">Agente</option>
+                  <option value="manager">Gerente</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
                 <input
                   type="tel"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -585,7 +585,7 @@ const TeamManagement = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -594,7 +594,7 @@ const TeamManagement = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hire Date</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Data de Contratação</label>
                 <input
                   type="date"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -608,7 +608,7 @@ const TeamManagement = () => {
                   type="submit"
                   className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
-                  {editingMember ? 'Update' : 'Add'} Member
+                  {editingMember ? 'Atualizar' : 'Adicionar'} Membro
                 </button>
                 <button
                   type="button"
@@ -626,7 +626,7 @@ const TeamManagement = () => {
                   }}
                   className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-400 transition-colors"
                 >
-                  Cancel
+                  Cancelar
                 </button>
               </div>
             </form>
