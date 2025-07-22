@@ -1068,7 +1068,7 @@ const App = () => {
                 onClick={logout}
                 className="text-red-600 hover:text-red-800 text-sm font-medium"
               >
-                Logout
+                Sair
               </button>
             </div>
           </div>
