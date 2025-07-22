@@ -486,7 +486,7 @@ const TeamManagement = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this team member?')) {
+    if (window.confirm('Tem certeza que deseja excluir este membro da equipe?')) {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/team-members/${id}`, {
           method: 'DELETE',
