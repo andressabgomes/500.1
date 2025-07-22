@@ -392,7 +392,7 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">No recent shifts to display</p>
+            <p className="text-gray-500 text-center py-8">Nenhum plantão recente para exibir</p>
           )}
         </div>
       </div>
