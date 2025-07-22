@@ -681,9 +681,9 @@ const TeamManagement = () => {
                           'bg-yellow-100 text-yellow-800'
                         } ${user?.role === 'manager' ? 'cursor-pointer' : 'cursor-default'}`}
                       >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="on_leave">On Leave</option>
+                        <option value="active">Ativo</option>
+                        <option value="inactive">Inativo</option>
+                        <option value="on_leave">De Licença</option>
                       </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
