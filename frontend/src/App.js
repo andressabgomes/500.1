@@ -126,7 +126,7 @@ const LoginForm = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">StarPrint CRM</h1>
-            <p className="text-gray-600">Customer Support Team Management</p>
+            <p className="text-gray-600">Gestão de Equipes de Suporte ao Cliente</p>
           </div>
 
           <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
@@ -136,7 +136,7 @@ const LoginForm = () => {
               }`}
               onClick={() => setIsLogin(true)}
             >
-              Login
+              Entrar
             </button>
             <button
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
@@ -144,7 +144,7 @@ const LoginForm = () => {
               }`}
               onClick={() => setIsLogin(false)}
             >
-              Register
+              Cadastrar
             </button>
           </div>
 
