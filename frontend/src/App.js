@@ -258,8 +258,8 @@ const Dashboard = () => {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name}!</h1>
-            <p className="text-blue-100">Here's what's happening with your team today</p>
+            <h1 className="text-3xl font-bold mb-2">Bem-vindo de volta, {user?.name}!</h1>
+            <p className="text-blue-100">Veja o que está acontecendo com sua equipe hoje</p>
           </div>
           <div className="hidden md:block">
             <img 
