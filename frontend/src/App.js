@@ -695,13 +695,13 @@ const TeamManagement = () => {
                           onClick={() => handleEdit(member)}
                           className="text-blue-600 hover:text-blue-800"
                         >
-                          Edit
+                          Editar
                         </button>
                         <button
                           onClick={() => handleDelete(member.id)}
                           className="text-red-600 hover:text-red-800"
                         >
-                          Delete
+                          Excluir
                         </button>
                       </td>
                     )}
