@@ -363,8 +363,8 @@ const Dashboard = () => {
       {/* Recent Shifts */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
         <div className="p-6 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Shifts</h3>
-          <p className="text-sm text-gray-600">Latest shift activities</p>
+          <h3 className="text-lg font-semibold text-gray-900">Plantões Recentes</h3>
+          <p className="text-sm text-gray-600">Últimas atividades de plantão</p>
         </div>
         <div className="p-6">
           {recentShifts.length > 0 ? (
