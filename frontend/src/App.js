@@ -962,7 +962,7 @@ const ShiftScheduling = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {shift.notes || 'No notes'}
+                      {shift.notes || 'Sem observações'}
                     </td>
                     {user?.role === 'manager' && (
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
