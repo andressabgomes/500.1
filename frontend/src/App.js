@@ -971,10 +971,10 @@ const ShiftScheduling = () => {
                           onChange={(e) => updateShiftStatus(shift.id, e.target.value)}
                           className="text-xs border border-gray-300 rounded px-2 py-1"
                         >
-                          <option value="scheduled">Scheduled</option>
-                          <option value="in_progress">In Progress</option>
-                          <option value="completed">Completed</option>
-                          <option value="missed">Missed</option>
+                          <option value="scheduled">Agendado</option>
+                          <option value="in_progress">Em Andamento</option>
+                          <option value="completed">Concluído</option>
+                          <option value="missed">Perdido</option>
                         </select>
                       </td>
                     )}
