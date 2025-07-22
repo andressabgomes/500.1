@@ -1024,9 +1024,9 @@ const App = () => {
   }
 
   const navigation = [
-    { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-    { id: 'team', name: 'Team Management', icon: '👥' },
-    { id: 'shifts', name: 'Shift Scheduling', icon: '📅' },
+    { id: 'dashboard', name: 'Painel', icon: '📊' },
+    { id: 'team', name: 'Gestão de Equipe', icon: '👥' },
+    { id: 'shifts', name: 'Escalas', icon: '📅' },
   ];
 
   return (
