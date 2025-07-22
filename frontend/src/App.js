@@ -668,7 +668,7 @@ const TeamManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {member.department || 'Not specified'}
+                      {member.department || 'Não especificado'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
