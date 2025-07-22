@@ -849,24 +849,24 @@ const ShiftScheduling = () => {
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold mb-4">Schedule New Shift</h3>
+            <h3 className="text-lg font-semibold mb-4">Agendar Novo Plantão</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Team Member</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Membro da Equipe</label>
                 <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={formData.team_member_id}
                   onChange={(e) => setFormData({...formData, team_member_id: e.target.value})}
                   required
                 >
-                  <option value="">Select team member</option>
+                  <option value="">Selecionar membro da equipe</option>
                   {teamMembers.map(member => (
                     <option key={member.id} value={member.id}>{member.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Horário de Início</label>
                 <input
                   type="datetime-local"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -876,7 +876,7 @@ const ShiftScheduling = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Horário de Término</label>
                 <input
                   type="datetime-local"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -886,7 +886,7 @@ const ShiftScheduling = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
                 <textarea
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={formData.notes}
@@ -899,7 +899,7 @@ const ShiftScheduling = () => {
                   type="submit"
                   className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
-                  Schedule Shift
+                  Agendar Plantão
                 </button>
                 <button
                   type="button"
@@ -914,7 +914,7 @@ const ShiftScheduling = () => {
                   }}
                   className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-400 transition-colors"
                 >
-                  Cancel
+                  Cancelar
                 </button>
               </div>
             </form>
