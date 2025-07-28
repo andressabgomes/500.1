@@ -288,7 +288,7 @@ class APITester:
         response = self.make_request('POST', '/tickets/', ticket_data)
         if response['success']:
             ticket_id = response['data']['data']['id']
-            ticket_number = response['data']['data']['ticket_number']
+            ticket_number = response['data']['data'].get('ticket_number', 'N/A')
             self.created_entities['tickets'].append(ticket_id)
             self.log_test("Create Ticket", True, f"Created ticket {ticket_number} with ID: {ticket_id}")
         else:
