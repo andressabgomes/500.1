@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
-from ..models import Customer, CustomerCreate, CustomerUpdate, ApiResponse, PaginatedResponse
-from ..services import CustomerService
+from models import Customer, CustomerCreate, CustomerUpdate, ApiResponse, PaginatedResponse
+from services import CustomerService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
