@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "yarn build",
-  "devCommand": "yarn dev",
+  "devCommand": "yarn dev", 
   "outputDirectory": "dist",
   "installCommand": "yarn install",
   "framework": "vite",
@@ -9,17 +9,6 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
     }
   ]
 }
