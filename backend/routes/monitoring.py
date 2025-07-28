@@ -1,22 +1,23 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
-from datetime import datetime, date
 from models import MonitoringMetric, MonitoringMetricCreate, ApiResponse, PaginatedResponse
 from services import MonitoringService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
+from datetime import datetime
 
 router = APIRouter(prefix="/monitoring", tags=["monitoring"])
 
 # Dependency to get database
 async def get_database():
     from motor.motor_asyncio import AsyncIOMotorClient
-    mongo_url = os.environ['MONGO_URL']
+    mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
     client = AsyncIOMotorClient(mongo_url)
-    db = client[os.environ['DB_NAME']]
+    db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
+    db = client[db_name]
     return db
 
-@router.post("/metrics", response_model=ApiResponse)
+@router.post("/", response_model=ApiResponse)
 async def create_metric(metric_data: MonitoringMetricCreate, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Create a new monitoring metric"""
     try:
@@ -27,13 +28,13 @@ async def create_metric(metric_data: MonitoringMetricCreate, db: AsyncIOMotorDat
         
         return ApiResponse(
             success=True,
-            message="Metric created successfully",
+            message="Monitoring metric created successfully",
             data=metric
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/metrics/{metric_id}", response_model=ApiResponse)
+@router.get("/{metric_id}", response_model=ApiResponse)
 async def get_metric(metric_id: str, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Get metric by ID"""
     try:
@@ -51,15 +52,12 @@ async def get_metric(metric_id: str, db: AsyncIOMotorDatabase = Depends(get_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/metrics", response_model=PaginatedResponse)
+@router.get("/", response_model=PaginatedResponse)
 async def get_metrics(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     category: Optional[str] = Query(None),
     user_id: Optional[str] = Query(None),
-    name: Optional[str] = Query(None),
-    date_from: Optional[date] = Query(None),
-    date_to: Optional[date] = Query(None),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get all metrics with pagination and filters"""
@@ -72,15 +70,6 @@ async def get_metrics(
             filters["category"] = category
         if user_id:
             filters["user_id"] = user_id
-        if name:
-            filters["name"] = name
-        if date_from or date_to:
-            date_filter = {}
-            if date_from:
-                date_filter["$gte"] = datetime.combine(date_from, datetime.min.time())
-            if date_to:
-                date_filter["$lte"] = datetime.combine(date_to, datetime.max.time())
-            filters["timestamp"] = date_filter
         
         metrics = await monitoring_service.get_all(skip=skip, limit=limit, filters=filters)
         total = await monitoring_service.count(filters)
@@ -97,7 +86,7 @@ async def get_metrics(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/metrics/{metric_id}", response_model=ApiResponse)
+@router.delete("/{metric_id}", response_model=ApiResponse)
 async def delete_metric(metric_id: str, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Delete metric"""
     try:
@@ -121,7 +110,7 @@ async def delete_metric(metric_id: str, db: AsyncIOMotorDatabase = Depends(get_d
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/metrics/category/{category}", response_model=ApiResponse)
+@router.get("/category/{category}", response_model=ApiResponse)
 async def get_metrics_by_category(category: str, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Get metrics by category"""
     try:
@@ -136,7 +125,7 @@ async def get_metrics_by_category(category: str, db: AsyncIOMotorDatabase = Depe
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/metrics/user/{user_id}", response_model=ApiResponse)
+@router.get("/user/{user_id}", response_model=ApiResponse)
 async def get_metrics_by_user(user_id: str, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Get metrics by user"""
     try:
@@ -151,30 +140,8 @@ async def get_metrics_by_user(user_id: str, db: AsyncIOMotorDatabase = Depends(g
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/metrics/timerange", response_model=ApiResponse)
-async def get_metrics_by_timerange(
-    start_date: datetime,
-    end_date: datetime,
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """Get metrics within time range"""
-    try:
-        monitoring_service = MonitoringService(db)
-        metrics = await monitoring_service.get_by_timerange(start_date, end_date)
-        
-        return ApiResponse(
-            success=True,
-            message="Metrics retrieved successfully",
-            data=metrics
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/metrics/latest", response_model=ApiResponse)
-async def get_latest_metrics(
-    limit: int = Query(100, ge=1, le=1000),
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
+@router.get("/latest/{limit}", response_model=ApiResponse)
+async def get_latest_metrics(limit: int = 100, db: AsyncIOMotorDatabase = Depends(get_database)):
     """Get latest metrics"""
     try:
         monitoring_service = MonitoringService(db)
@@ -188,22 +155,52 @@ async def get_latest_metrics(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/dashboard", response_model=ApiResponse)
-async def get_dashboard_data(db: AsyncIOMotorDatabase = Depends(get_database)):
-    """Get dashboard monitoring data"""
+@router.get("/timerange/{start_date}/{end_date}", response_model=ApiResponse)
+async def get_metrics_by_timerange(
+    start_date: str,  # Format: YYYY-MM-DD
+    end_date: str,    # Format: YYYY-MM-DD
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """Get metrics within time range"""
     try:
         monitoring_service = MonitoringService(db)
         
-        # Get various metrics for dashboard
+        # Parse dates
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+        
+        metrics = await monitoring_service.get_by_timerange(start_date_obj, end_date_obj)
+        
+        return ApiResponse(
+            success=True,
+            message="Metrics retrieved successfully",
+            data=metrics
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/dashboard/data", response_model=ApiResponse)
+async def get_dashboard_data(db: AsyncIOMotorDatabase = Depends(get_database)):
+    """Get dashboard data with aggregated metrics"""
+    try:
+        monitoring_service = MonitoringService(db)
+        
+        # Get latest metrics
+        latest_metrics = await monitoring_service.get_latest_metrics(50)
+        
+        # Get metrics by category
         performance_metrics = await monitoring_service.get_by_category("performance")
         quality_metrics = await monitoring_service.get_by_category("quality")
         volume_metrics = await monitoring_service.get_by_category("volume")
         
         dashboard_data = {
-            "performance": performance_metrics[:10],  # Latest 10
-            "quality": quality_metrics[:10],
-            "volume": volume_metrics[:10],
-            "last_updated": datetime.utcnow()
+            "latest_metrics": latest_metrics,
+            "performance_metrics": performance_metrics[:10],  # Last 10
+            "quality_metrics": quality_metrics[:10],
+            "volume_metrics": volume_metrics[:10],
+            "total_metrics": len(latest_metrics)
         }
         
         return ApiResponse(
