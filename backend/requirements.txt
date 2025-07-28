@@ -6,6 +6,7 @@ python-dotenv>=1.0.1
 # Database
 pymongo==4.5.0
 motor==3.3.1
+dnspython>=2.1.0
 
 # Data Validation & Models
 pydantic>=2.6.4
@@ -20,6 +21,9 @@ cryptography>=42.0.8
 # HTTP & API
 requests>=2.31.0
 python-multipart>=0.0.9
+
+# SSL/TLS Support
+certifi>=2021.10.8
 
 # Utilities
 tzdata>=2024.2
