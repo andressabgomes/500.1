@@ -10,6 +10,13 @@ from typing import List
 import uuid
 from datetime import datetime
 
+# Import route modules
+from routes.users import router as users_router
+from routes.customers import router as customers_router
+from routes.tickets import router as tickets_router
+from routes.goals import router as goals_router
+from routes.attendance import router as attendance_router
+from routes.monitoring import router as monitoring_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -20,11 +27,22 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(
+    title="StarPrint CRM API",
+    description="Comprehensive CRM API for StarPrint Etiquetas e Rótulos",
+    version="1.0.0"
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Include all route modules
+api_router.include_router(users_router)
+api_router.include_router(customers_router)
+api_router.include_router(tickets_router)
+api_router.include_router(goals_router)
+api_router.include_router(attendance_router)
+api_router.include_router(monitoring_router)
 
 # Define Models
 class StatusCheck(BaseModel):
@@ -38,7 +56,7 @@ class StatusCheckCreate(BaseModel):
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "StarPrint CRM API v1.0.0"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
@@ -51,6 +69,15 @@ async def create_status_check(input: StatusCheckCreate):
 async def get_status_checks():
     status_checks = await db.status_checks.find().to_list(1000)
     return [StatusCheck(**status_check) for status_check in status_checks]
+
+@api_router.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow(),
+        "version": "1.0.0"
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
