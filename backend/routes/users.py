@@ -9,12 +9,8 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 # Dependency to get database
 async def get_database():
-    from motor.motor_asyncio import AsyncIOMotorClient
-    mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
-    client = AsyncIOMotorClient(mongo_url)
-    db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
-    db = client[db_name]
-    return db
+    from database import get_database
+    return get_database()
 
 @router.post("/", response_model=ApiResponse)
 async def create_user(user_data: UserCreate, db: AsyncIOMotorDatabase = Depends(get_database)):
