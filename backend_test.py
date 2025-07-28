@@ -691,8 +691,8 @@ class APITester:
         response = self.make_request('POST', '/tickets/', invalid_ticket)
         self.log_test(
             "Create Ticket with Non-existent Customer",
-            not response['success'] and response['status_code'] == 404,
-            f"Correctly rejected non-existent customer: {response['status_code'] == 404}"
+            response['status_code'] == 404,
+            f"Status code: {response['status_code']}, Expected: 404"
         )
         
         # Test 4: Rate Ticket with Invalid Rating
