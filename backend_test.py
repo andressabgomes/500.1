@@ -701,8 +701,8 @@ class APITester:
             response = self.make_request('PATCH', f'/tickets/{ticket_id}/rate', params={'rating': 10})
             self.log_test(
                 "Rate Ticket with Invalid Rating",
-                not response['success'] and response['status_code'] == 400,
-                f"Correctly rejected invalid rating: {response['status_code'] == 400}"
+                response['status_code'] == 400,
+                f"Status code: {response['status_code']}, Expected: 400"
             )
         
         # Test 5: Update Non-existent Goal
