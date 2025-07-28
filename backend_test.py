@@ -12,7 +12,7 @@ from typing import Dict, Any, List
 import os
 
 # Get backend URL from environment
-BACKEND_URL = "https://5aa68d36-1e1e-4d3d-94d8-0011ccae3a58.preview.emergentagent.com/api"
+BACKEND_URL = "https://2abee03d-b1f7-47f0-b834-0e866b360d76.preview.emergentagent.com/api"
 
 class APITester:
     def __init__(self, base_url: str):
