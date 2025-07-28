@@ -1,0 +1,14 @@
+[build]
+provider = "nodejs"
+
+[start]
+cmd = "npm run preview"
+
+[install]
+installCmd = "yarn install"
+
+[build.env]
+NODE_VERSION = "18"
+
+[phases.build]
+cmds = ["yarn build"]
