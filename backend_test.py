@@ -300,7 +300,7 @@ class APITester:
         self.log_test(
             "Get Ticket by ID",
             response['success'] and response['data']['data']['title'] == ticket_data['title'],
-            f"Retrieved ticket: {response['data']['data']['ticket_number'] if response['success'] else response['data']}"
+            f"Retrieved ticket: {response['data']['data'].get('ticket_number', 'N/A') if response['success'] else response['data']}"
         )
         
         # Test 3: Get All Tickets
