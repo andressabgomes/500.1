@@ -10,9 +10,10 @@ router = APIRouter(prefix="/customers", tags=["customers"])
 # Dependency to get database
 async def get_database():
     from motor.motor_asyncio import AsyncIOMotorClient
-    mongo_url = os.environ['MONGO_URL']
+    mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
     client = AsyncIOMotorClient(mongo_url)
-    db = client[os.environ['DB_NAME']]
+    db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
+    db = client[db_name]
     return db
 
 @router.post("/", response_model=ApiResponse)
@@ -61,27 +62,19 @@ async def get_customers(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     is_active: Optional[bool] = Query(None),
-    search: Optional[str] = Query(None),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get all customers with pagination and filters"""
     try:
         customer_service = CustomerService(db)
         
-        # If search query provided, use search
-        if search:
-            customers = await customer_service.search(search)
-            total = len(customers)
-            # Apply pagination to search results
-            customers = customers[skip:skip + limit]
-        else:
-            # Build filters
-            filters = {}
-            if is_active is not None:
-                filters["is_active"] = is_active
-            
-            customers = await customer_service.get_all(skip=skip, limit=limit, filters=filters)
-            total = await customer_service.count(filters)
+        # Build filters
+        filters = {}
+        if is_active is not None:
+            filters["is_active"] = is_active
+        
+        customers = await customer_service.get_all(skip=skip, limit=limit, filters=filters)
+        total = await customer_service.count(filters)
         
         return PaginatedResponse(
             success=True,
@@ -197,7 +190,7 @@ async def search_customers(query: str, db: AsyncIOMotorDatabase = Depends(get_da
         
         return ApiResponse(
             success=True,
-            message="Customers retrieved successfully",
+            message="Search completed successfully",
             data=customers
         )
     except Exception as e:

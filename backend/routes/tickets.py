@@ -1,18 +1,20 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
 from models import Ticket, TicketCreate, TicketUpdate, ApiResponse, PaginatedResponse
-from services import TicketService, CustomerService
+from services import TicketService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
+from datetime import datetime
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 # Dependency to get database
 async def get_database():
     from motor.motor_asyncio import AsyncIOMotorClient
-    mongo_url = os.environ['MONGO_URL']
+    mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
     client = AsyncIOMotorClient(mongo_url)
-    db = client[os.environ['DB_NAME']]
+    db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
+    db = client[db_name]
     return db
 
 @router.post("/", response_model=ApiResponse)
@@ -20,12 +22,6 @@ async def create_ticket(ticket_data: TicketCreate, db: AsyncIOMotorDatabase = De
     """Create a new ticket"""
     try:
         ticket_service = TicketService(db)
-        customer_service = CustomerService(db)
-        
-        # Check if customer exists
-        customer = await customer_service.get_by_id(ticket_data.customer_id)
-        if not customer:
-            raise HTTPException(status_code=404, detail="Customer not found")
         
         ticket_dict = ticket_data.dict()
         ticket = await ticket_service.create(ticket_dict)
@@ -62,9 +58,8 @@ async def get_tickets(
     limit: int = Query(100, ge=1, le=1000),
     status: Optional[str] = Query(None),
     priority: Optional[str] = Query(None),
-    assigned_to: Optional[str] = Query(None),
     customer_id: Optional[str] = Query(None),
-    channel: Optional[str] = Query(None),
+    assigned_to: Optional[str] = Query(None),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get all tickets with pagination and filters"""
@@ -77,12 +72,10 @@ async def get_tickets(
             filters["status"] = status
         if priority:
             filters["priority"] = priority
-        if assigned_to:
-            filters["assigned_to"] = assigned_to
         if customer_id:
             filters["customer_id"] = customer_id
-        if channel:
-            filters["channel"] = channel
+        if assigned_to:
+            filters["assigned_to"] = assigned_to
         
         tickets = await ticket_service.get_all(skip=skip, limit=limit, filters=filters)
         total = await ticket_service.count(filters)
@@ -251,16 +244,12 @@ async def resolve_ticket(
 async def rate_ticket(
     ticket_id: str, 
     rating: int, 
-    comment: Optional[str] = None, 
+    comment: Optional[str] = None,
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Rate ticket satisfaction"""
     try:
         ticket_service = TicketService(db)
-        
-        # Validate rating
-        if rating < 1 or rating > 5:
-            raise HTTPException(status_code=400, detail="Rating must be between 1 and 5")
         
         # Check if ticket exists
         existing_ticket = await ticket_service.get_by_id(ticket_id)
