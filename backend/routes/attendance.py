@@ -1,19 +1,20 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
-from datetime import datetime, date
 from models import Attendance, AttendanceCreate, AttendanceUpdate, ApiResponse, PaginatedResponse
 from services import AttendanceService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
+from datetime import datetime
 
 router = APIRouter(prefix="/attendance", tags=["attendance"])
 
 # Dependency to get database
 async def get_database():
     from motor.motor_asyncio import AsyncIOMotorClient
-    mongo_url = os.environ['MONGO_URL']
+    mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
     client = AsyncIOMotorClient(mongo_url)
-    db = client[os.environ['DB_NAME']]
+    db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
+    db = client[db_name]
     return db
 
 @router.post("/", response_model=ApiResponse)
@@ -27,7 +28,7 @@ async def create_attendance(attendance_data: AttendanceCreate, db: AsyncIOMotorD
         
         return ApiResponse(
             success=True,
-            message="Attendance created successfully",
+            message="Attendance record created successfully",
             data=attendance
         )
     except Exception as e:
@@ -41,11 +42,11 @@ async def get_attendance(attendance_id: str, db: AsyncIOMotorDatabase = Depends(
         attendance = await attendance_service.get_by_id(attendance_id)
         
         if not attendance:
-            raise HTTPException(status_code=404, detail="Attendance not found")
+            raise HTTPException(status_code=404, detail="Attendance record not found")
         
         return ApiResponse(
             success=True,
-            message="Attendance retrieved successfully",
+            message="Attendance record retrieved successfully",
             data=attendance
         )
     except Exception as e:
@@ -57,8 +58,6 @@ async def get_attendance_records(
     limit: int = Query(100, ge=1, le=1000),
     user_id: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
-    date_from: Optional[date] = Query(None),
-    date_to: Optional[date] = Query(None),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get all attendance records with pagination and filters"""
@@ -71,13 +70,6 @@ async def get_attendance_records(
             filters["user_id"] = user_id
         if status:
             filters["status"] = status
-        if date_from or date_to:
-            date_filter = {}
-            if date_from:
-                date_filter["$gte"] = datetime.combine(date_from, datetime.min.time())
-            if date_to:
-                date_filter["$lte"] = datetime.combine(date_to, datetime.max.time())
-            filters["date"] = date_filter
         
         attendance_records = await attendance_service.get_all(skip=skip, limit=limit, filters=filters)
         total = await attendance_service.count(filters)
@@ -107,7 +99,7 @@ async def update_attendance(
         # Check if attendance exists
         existing_attendance = await attendance_service.get_by_id(attendance_id)
         if not existing_attendance:
-            raise HTTPException(status_code=404, detail="Attendance not found")
+            raise HTTPException(status_code=404, detail="Attendance record not found")
         
         # Update attendance
         update_dict = attendance_data.dict(exclude_unset=True)
@@ -115,7 +107,7 @@ async def update_attendance(
         
         return ApiResponse(
             success=True,
-            message="Attendance updated successfully",
+            message="Attendance record updated successfully",
             data=attendance
         )
     except Exception as e:
@@ -130,38 +122,27 @@ async def delete_attendance(attendance_id: str, db: AsyncIOMotorDatabase = Depen
         # Check if attendance exists
         existing_attendance = await attendance_service.get_by_id(attendance_id)
         if not existing_attendance:
-            raise HTTPException(status_code=404, detail="Attendance not found")
+            raise HTTPException(status_code=404, detail="Attendance record not found")
         
         # Delete attendance
         deleted = await attendance_service.delete(attendance_id)
         
         if not deleted:
-            raise HTTPException(status_code=500, detail="Failed to delete attendance")
+            raise HTTPException(status_code=500, detail="Failed to delete attendance record")
         
         return ApiResponse(
             success=True,
-            message="Attendance deleted successfully"
+            message="Attendance record deleted successfully"
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/user/{user_id}", response_model=ApiResponse)
-async def get_attendance_by_user(
-    user_id: str, 
-    date_from: Optional[date] = Query(None),
-    date_to: Optional[date] = Query(None),
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """Get attendance by user and date range"""
+async def get_attendance_by_user(user_id: str, db: AsyncIOMotorDatabase = Depends(get_database)):
+    """Get attendance records by user"""
     try:
         attendance_service = AttendanceService(db)
-        
-        if date_from and date_to:
-            start_date = datetime.combine(date_from, datetime.min.time())
-            end_date = datetime.combine(date_to, datetime.max.time())
-            attendance_records = await attendance_service.get_by_user_range(user_id, start_date, end_date)
-        else:
-            attendance_records = await attendance_service.get_all(filters={"user_id": user_id})
+        attendance_records = await attendance_service.get_all(filters={"user_id": user_id})
         
         return ApiResponse(
             success=True,
@@ -172,33 +153,36 @@ async def get_attendance_by_user(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/user/{user_id}/date/{date}", response_model=ApiResponse)
-async def get_attendance_by_user_date(
+async def get_attendance_by_user_and_date(
     user_id: str, 
-    date: date, 
+    date: str,  # Format: YYYY-MM-DD
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """Get attendance by user and specific date"""
+    """Get attendance by user and date"""
     try:
         attendance_service = AttendanceService(db)
         
-        date_time = datetime.combine(date, datetime.min.time())
-        attendance = await attendance_service.get_by_user_and_date(user_id, date_time)
+        # Parse date
+        date_obj = datetime.strptime(date, "%Y-%m-%d")
+        attendance = await attendance_service.get_by_user_and_date(user_id, date_obj)
         
         if not attendance:
-            raise HTTPException(status_code=404, detail="Attendance not found")
+            raise HTTPException(status_code=404, detail="Attendance record not found")
         
         return ApiResponse(
             success=True,
-            message="Attendance retrieved successfully",
+            message="Attendance record retrieved successfully",
             data=attendance
         )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/checkin", response_model=ApiResponse)
 async def check_in(
     user_id: str, 
-    timestamp: Optional[datetime] = None, 
+    timestamp: Optional[datetime] = None,
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Check in user"""
@@ -209,7 +193,7 @@ async def check_in(
         
         return ApiResponse(
             success=True,
-            message="Check-in successful",
+            message="Checked in successfully",
             data=attendance
         )
     except Exception as e:
@@ -218,7 +202,7 @@ async def check_in(
 @router.post("/checkout", response_model=ApiResponse)
 async def check_out(
     user_id: str, 
-    timestamp: Optional[datetime] = None, 
+    timestamp: Optional[datetime] = None,
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Check out user"""
@@ -228,12 +212,46 @@ async def check_out(
         attendance = await attendance_service.check_out(user_id, timestamp)
         
         if not attendance:
-            raise HTTPException(status_code=404, detail="No check-in found for today")
+            raise HTTPException(status_code=404, detail="No check-in record found for today")
         
         return ApiResponse(
             success=True,
-            message="Check-out successful",
+            message="Checked out successfully",
             data=attendance
         )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/date-range/{start_date}/{end_date}", response_model=ApiResponse)
+async def get_attendance_by_date_range(
+    start_date: str,  # Format: YYYY-MM-DD
+    end_date: str,    # Format: YYYY-MM-DD
+    user_id: Optional[str] = Query(None),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """Get attendance records within date range"""
+    try:
+        attendance_service = AttendanceService(db)
+        
+        # Parse dates
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+        
+        if user_id:
+            attendance_records = await attendance_service.get_by_user_range(user_id, start_date_obj, end_date_obj)
+        else:
+            # Get all attendance records in range
+            filters = {
+                "date": {"$gte": start_date_obj, "$lte": end_date_obj}
+            }
+            attendance_records = await attendance_service.get_all(filters=filters)
+        
+        return ApiResponse(
+            success=True,
+            message="Attendance records retrieved successfully",
+            data=attendance_records
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
