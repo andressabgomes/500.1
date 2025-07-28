@@ -1,7 +1,6 @@
 from fastapi import FastAPI, APIRouter
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
@@ -9,6 +8,9 @@ from pydantic import BaseModel, Field
 from typing import List
 import uuid
 from datetime import datetime
+
+# Import database
+from database import db, client
 
 # Import route modules
 from routes.users import router as users_router
@@ -20,20 +22,6 @@ from routes.monitoring import router as monitoring_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection - with fallback for Railway
-mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
-
-# SSL configuration for MongoDB Atlas
-if 'mongodb+srv' in mongo_url or 'mongodb.net' in mongo_url:
-    # Production MongoDB Atlas
-    client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000, tlsAllowInvalidCertificates=False)
-else:
-    # Local MongoDB
-    client = AsyncIOMotorClient(mongo_url)
-
-db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
-db = client[db_name]
 
 # Create the main app without a prefix
 app = FastAPI(
