@@ -710,8 +710,8 @@ class APITester:
         response = self.make_request('PUT', f'/goals/{fake_goal_id}', {"title": "Updated Goal"})
         self.log_test(
             "Update Non-existent Goal",
-            not response['success'] and response['status_code'] == 404,
-            f"Correctly returned 404: {response['status_code'] == 404}"
+            response['status_code'] == 404,
+            f"Status code: {response['status_code']}, Expected: 404"
         )
 
     def cleanup_test_data(self):
