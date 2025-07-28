@@ -180,15 +180,16 @@ class APITester:
         """Test Customer Management API"""
         print("\n=== Testing Customer Management API ===")
         
-        # Test data
+        # Test data with unique identifiers
+        unique_id = str(uuid.uuid4())[:8]
         customer_data = {
-            "name": "Empresa ABC Ltda",
-            "email": "contato@empresaabc.com.br",
-            "phone": "+55 11 3333-4444",
-            "company": "ABC Indústria",
-            "address": "Rua das Flores, 123 - São Paulo, SP",
-            "notes": "Cliente premium com contrato anual",
-            "tags": ["premium", "industrial", "sao-paulo"]
+            "name": f"Test Company {unique_id}",
+            "email": f"contact.{unique_id}@testcompany.com.br",
+            "phone": f"+55 11 3333-{unique_id[:4]}",
+            "company": f"Test Industry {unique_id}",
+            "address": f"Test Street, {unique_id[:3]} - São Paulo, SP",
+            "notes": "Test customer for API testing",
+            "tags": ["test", "api", "automation"]
         }
         
         # Test 1: Create Customer
