@@ -84,12 +84,13 @@ class APITester:
         """Test User Management API"""
         print("\n=== Testing User Management API ===")
         
-        # Test data
+        # Test data with unique identifiers
+        unique_id = str(uuid.uuid4())[:8]
         user_data = {
-            "name": "Maria Silva",
-            "email": "maria.silva@starprint.com",
+            "name": f"Test User {unique_id}",
+            "email": f"test.user.{unique_id}@starprint.com",
             "role": "agent",
-            "phone": "+55 11 99999-1234",
+            "phone": f"+55 11 9999-{unique_id[:4]}",
             "department": "Customer Support",
             "skills": ["Portuguese", "Customer Service", "Technical Support"]
         }
