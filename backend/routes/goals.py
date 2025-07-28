@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
-from ..models import Goal, GoalCreate, GoalUpdate, ApiResponse, PaginatedResponse
-from ..services import GoalService
+from models import Goal, GoalCreate, GoalUpdate, ApiResponse, PaginatedResponse
+from services import GoalService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
