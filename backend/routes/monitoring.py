@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
 from datetime import datetime, date
-from ..models import MonitoringMetric, MonitoringMetricCreate, ApiResponse, PaginatedResponse
-from ..services import MonitoringService
+from models import MonitoringMetric, MonitoringMetricCreate, ApiResponse, PaginatedResponse
+from services import MonitoringService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
