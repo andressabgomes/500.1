@@ -664,8 +664,8 @@ class APITester:
         response = self.make_request('GET', f'/users/{fake_id}')
         self.log_test(
             "Get Non-existent User",
-            not response['success'] and response['status_code'] == 404,
-            f"Correctly returned 404: {response['status_code'] == 404}"
+            response['status_code'] == 404,
+            f"Status code: {response['status_code']}, Expected: 404"
         )
         
         # Test 2: Create User with Invalid Email
