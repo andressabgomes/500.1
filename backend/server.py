@@ -23,7 +23,15 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection - with fallback for Railway
 mongo_url = os.environ.get('MONGO_URL', os.environ.get('DATABASE_URL', 'mongodb://localhost:27017'))
-client = AsyncIOMotorClient(mongo_url)
+
+# SSL configuration for MongoDB Atlas
+if 'mongodb+srv' in mongo_url or 'mongodb.net' in mongo_url:
+    # Production MongoDB Atlas
+    client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000, tlsAllowInvalidCertificates=False)
+else:
+    # Local MongoDB
+    client = AsyncIOMotorClient(mongo_url)
+
 db_name = os.environ.get('DB_NAME', os.environ.get('DATABASE_NAME', 'starprint_crm'))
 db = client[db_name]
 
